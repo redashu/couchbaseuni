@@ -69,3 +69,83 @@ different if you're running so called "non-root/non-sudo install" or
 if you've built Couchbase Server from source.
 
 ```
+
+### logs location 
+```
+[ec2-user@ip-172-31-73-6 ~]$ docker  exec  -it  ashucouchbase  bash 
+root@040e9b1c0a6c:/# 
+root@040e9b1c0a6c:/# 
+root@040e9b1c0a6c:/# cat   /etc/os-release 
+NAME="Ubuntu"
+VERSION="16.04.6 LTS (Xenial Xerus)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 16.04.6 LTS"
+VERSION_ID="16.04"
+HOME_URL="http://www.ubuntu.com/"
+SUPPORT_URL="http://help.ubuntu.com/"
+BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
+VERSION_CODENAME=xenial
+UBUNTU_CODENAME=xenial
+root@040e9b1c0a6c:/# cd   /opt/couchbase/
+root@040e9b1c0a6c:/opt/couchbase# ls
+LICENSE.txt  README.txt  VARIANT.txt  VERSION.txt  bin  etc  lib  manifest.xml  samples  share  var
+root@040e9b1c0a6c:/opt/couchbase# cd  var/
+root@040e9b1c0a6c:/opt/couchbase/var# ls
+lib
+root@040e9b1c0a6c:/opt/couchbase/var# cd  lib/
+root@040e9b1c0a6c:/opt/couchbase/var/lib# ls
+couchbase  moxi
+root@040e9b1c0a6c:/opt/couchbase/var/lib# cd  couchbase/
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase# ls
+config                              couchbase-server.babysitter.node  couchbase-server.pid  data      ip        leader_lease  logs    stats
+couchbase-server.babysitter.cookie  couchbase-server.node             crash                 initargs  isasl.pw  localtoken    ns_log  tmp
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase# cd  logs/
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/logs# ls
+babysitter.log  error.log        http_access_internal.log  mapreduce_errors.log      ns_couchdb.log  stats.log
+couchdb.log     goxdcr.log       info.log                  memcached.log.000000.txt  rebalance       views.log
+debug.log       http_access.log  json_rpc.log              metakv.log                reports.log     xdcr_target.log
+
+```
+
+## updating RAM if Required during conf set
+```
+ docker  update  ashucouchbase  --memory 3024m
+ 
+ ```
+ 
+## Bucket from Backend access at filesystem 
+
+```
+root@040e9b1c0a6c:/opt/couchbase# pwd
+/opt/couchbase
+root@040e9b1c0a6c:/opt/couchbase# ls
+LICENSE.txt  README.txt  VARIANT.txt  VERSION.txt  bin  etc  lib  manifest.xml  samples  share  var
+root@040e9b1c0a6c:/opt/couchbase# cd  var/
+root@040e9b1c0a6c:/opt/couchbase/var# ls
+lib
+root@040e9b1c0a6c:/opt/couchbase/var# cd lib/
+root@040e9b1c0a6c:/opt/couchbase/var/lib# ls
+couchbase  moxi
+root@040e9b1c0a6c:/opt/couchbase/var/lib# cd  couchbase/
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase# ls
+config                              couchbase-server.babysitter.node  couchbase-server.pid  data      ip_start  leader_lease  logs    stats
+couchbase-server.babysitter.cookie  couchbase-server.node             crash                 initargs  isasl.pw  localtoken    ns_log  tmp
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase# cd  data/
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/data# ls
+@2i  @analytics  @fts  ashubucket1
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/data# ls
+@2i  @analytics  @fts  ashubucket1
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/data# ls  -l
+total 52
+drwxr-x--- 4 couchbase couchbase    58 Aug 17 07:10 @2i
+drwxrwx--- 3 couchbase couchbase    26 Aug 17 07:20 @analytics
+drwxrwx--- 2 couchbase couchbase    23 Aug 17 07:20 @fts
+drwxrwx--- 2 couchbase couchbase 28672 Aug 17 07:23 ashubucket1
+root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/data# ls ashubucket1/
+0.couch.1     161.couch.1  246.couch.1  330.couch.1  415.couch.1  50.couch.1   585.couch.1  67.couch.1   754.couch.1  839.couch.1  923.couch.1
+1.couch.1     162.couch.1  247.couch.1  331.couch.1  416.couch.1  500.couch.1  586.couch.1  670.couch.1  755.couch.1  84.couch.1   924.couch.1
+
+```
+
+ 
