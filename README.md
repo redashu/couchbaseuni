@@ -49,3 +49,23 @@ docker  run -d --name  ashucouchbase --restart always --memory 2048m  --cpus 1 -
 
 ```
 
+## checking logs 
+```
+[ec2-user@ip-172-31-73-6 ~]$ docker  logs  ashucouchbase  
+Starting Couchbase Server -- Web UI available at http://<ip>:8091
+and logs available in /opt/couchbase/var/lib/couchbase/logs
+
+The maximum number of open files for the couchbase user is set too low (1024).
+It must be at least 70000.
+
+Normally this can be increased by adding the following lines to
+/etc/security/limits.conf:
+
+couchbase              soft    nofile                  <value>
+couchbase              hard    nofile                  <value>
+
+Where <value> is greater than 70000. The procedure may be totally
+different if you're running so called "non-root/non-sudo install" or
+if you've built Couchbase Server from source.
+
+```
