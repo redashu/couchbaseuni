@@ -148,4 +148,30 @@ root@040e9b1c0a6c:/opt/couchbase/var/lib/couchbase/data# ls ashubucket1/
 
 ```
 
- 
+# Docker volume and Network for Couchbase communitiy addition 
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ docker  volume  create   ashudbvol 
+ashudbvol
+
+===
+[ec2-user@ip-172-31-73-6 ~]$ docker  volume  inspect  ashudbvol 
+[
+    {
+        "CreatedAt": "2020-08-17T09:02:19Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/ashudbvol/_data",
+        "Name": "ashudbvol",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+
+====
+
+
+docker  run -d --name  ashucouchbase --restart always --memory 4096M  --cpus 1 -p 1110-1115:8091-8096 -p 2220-2221:11210-11211   --network ashubr1  --ip 192.168.1.100 -v ashudbvol:/opt/couchbase:rw  couchbase:community-6.5.1
+
+```
+
