@@ -175,3 +175,21 @@ docker  run -d --name  ashucouchbase --restart always --memory 4096M  --cpus 1 -
 
 ```
 
+# One click couchbase community addition in Container 
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ cat  deploysinglenode.sh 
+#!/bin/bash
+
+docker   network  create  ashubr1  --subnet  192.168.1.0/24
+docker  volume  create   ashudbvol
+docker  run -d --name  ashucouchbase --restart always --memory 4096M  --cpus 1 -p 1110-1115:8091-8096 -p 2220-2221:11210-11211   --network ashubr1  --ip 192.168.1.100 -v ashudbvol:/opt/couchbase:rw  couchbase:community-6.5.1
+
+```
+## deploy 
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ bash  deploysinglenode.sh 
+
+```
+
