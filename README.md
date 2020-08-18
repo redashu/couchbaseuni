@@ -233,3 +233,51 @@ ashucouchdep1-6967888f67-7pc25       1/1     Running   0          64m   192.168.
 ashucouchjoinnode-597c9f4c48-9cgsx   1/1     Running   0          18m   192.168.159.206   ip-172-31-60-76.ec2.internal   <none>           <none>
 
 ```
+
+## scale join nodes
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get  deploy -n ashutoshh 
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchdep1       1/1     1            1           73m
+ashucouchjoinnode   1/1     1            1           27m
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  scale deployment  ashucouchjoinnode  --replicas=3  -n ashutoshh 
+deployment.apps/ashucouchjoinnode scaled
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get  deploy -n ashutoshh 
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchdep1       1/1     1            1           73m
+ashucouchjoinnode   3/3     3            3           27m
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get po -o wide  -n ashutoshh 
+NAME                                 READY   STATUS    RESTARTS   AGE   IP                NODE                            NOMINATED NODE   READINESS GATES
+ashucouchdep1-6967888f67-7pc25       1/1     Running   0          74m   192.168.30.80     ip-172-31-59-10.ec2.internal    <none>           <none>
+ashucouchjoinnode-597c9f4c48-9cgsx   1/1     Running   0          28m   192.168.159.206   ip-172-31-60-76.ec2.internal    <none>           <none>
+ashucouchjoinnode-597c9f4c48-z5f2b   1/1     Running   0          21s   192.168.236.139   ip-172-31-56-185.ec2.internal   <none>           <none>
+ashucouchjoinnode-597c9f4c48-z7lcl   1/1     Running   0          21s   192.168.30.89     ip-172-31-59-10.ec2.internal    <none>           <none>
+
+```
+
+## couchbase node add shell script
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ cat joinnode.sh 
+#!/bin/bash
+
+#  setting  username  and  password 
+
+curl -v   http://127.0.0.1:8091/node/controller/setupServices   -d services='kv%2Cn1ql%2Cindex'
+curl -v -X POST  http://127.0.0.1:8091/settings/web  -d port=8091 -d username=Administrator -d password=couchdb
+
+## setting  up   data serive 
+
+# Now adding  to cluster  
+#  check current ip of couchbase node 
+IP=`hostname -i`
+# you main node cluster ip 
+couchmain='192.168.30.80'
+couchbase-cli server-add -c $couchmain:8091  --username Administrator  --password redhat123 --server-add $IP:8091 --server-add-username Administrator --server-add-password couchdb 
+
+```
