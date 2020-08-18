@@ -189,6 +189,47 @@ ashucouchdep1-6967888f67-7pc25   1/1     Running   0          4m5s   192.168.30.
 [ec2-user@ip-172-31-73-6 ~]$ 
 
 ```
+## Creating service of Deployment 
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get   deploy  -n ashutoshh 
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchdep1   1/1     1            1           29m
+[ec2-user@ip-172-31-73-6 ~]$ 
+              
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  expose  deployment  ashucouchdep1  --type  NodePort  --port  1231  --target-port 8091  --name ashusvc1  -n ashutoshh 
+service/ashusvc1 exposed
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get  svc  -n ashutoshh 
+NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+ashusvc1   NodePort   10.100.69.164   <none>        1231:30575/TCP   6s
 
   
-  
+```
+### creating deployment for another couchbase node to join 
+```
+kubectl  create  deployment  ashucouchjoinnode  --image=couchbase:community-6.5.1 --namespace ashutoshh --dry-run=client  -o yaml      >ashucouchjoin.yml
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get   deploy  -n ashutoshh 
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchdep1       1/1     1            1           46m
+ashucouchjoinnode   1/1     1            1           11s
+
+```
+
+## setting credential from Rest API 
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   exec  -it ashucouchjoinnode-597c9f4c48-9cgsx  bash  -n ashutoshh 
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl kubectl exec [POD] -- [COMMAND] instead.
+root@ashucouchjoinnode-597c9f4c48-9cgsx:/# 
+
+root@ashucouchjoinnode-597c9f4c48-9cgsx:/# curl -v -X POST  http://127.0.0.1:8091//settings/web  -d port=8091 -d username=Administrator -d password=couchdb
+
+```
+
+### Now check join node ip and from webUI you can join it 
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get  po  -n ashutoshh  -o wide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP                NODE                           NOMINATED NODE   READINESS GATES
+ashucouchdep1-6967888f67-7pc25       1/1     Running   0          64m   192.168.30.80     ip-172-31-59-10.ec2.internal   <none>           <none>
+ashucouchjoinnode-597c9f4c48-9cgsx   1/1     Running   0          18m   192.168.159.206   ip-172-31-60-76.ec2.internal   <none>           <none>
+
+```
