@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashucouchcls
+  name: ashucouchcls  # name of  deployment 
+  namespace: ashutoshh   #  namespace 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashucouchcls
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashucouchcls  #  label of pods 
+    spec:
+      containers:
+      - image: dockerashu/couchbasecluster:community651v3
+        name: couchbase
+        ports:
+        - containerPort: 8091  # added this section 
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashucouchclssvc
+  name: ashucouchclssvc   # name of service
+  namespace: ashutoshh  # namespace 
+spec:
+  ports:
+  - name: 8091-8091
+    port: 8091
+    protocol: TCP
+    targetPort: 8091
+  selector:
+   app: ashucouchcls    #  this must match  to label of pods
+  type: NodePort
+status:
+  loadBalancer: {}
