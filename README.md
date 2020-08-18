@@ -291,3 +291,30 @@ couchbase-cli server-add -c $couchmain:8091  --username Administrator  --passwor
   301  kubectl  exec -it  ashucouchjoinnode-597c9f4c48-z7lcl  bash  -n ashutoshh 
 
 ```
+
+## Deployment of Node and  adding replica
+
+```
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  deploy -n ashutoshh 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchcls   1/1     1            1           22m
+couchnode      1/1     1            1           11m
+[ec2-user@ip-172-31-73-6 couchdeployment]$ 
+[ec2-user@ip-172-31-73-6 couchdeployment]$ 
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl scale deployment couchnode --replicas=2  -n  ashutoshh 
+deployment.apps/couchnode scaled
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  deploy -n ashutoshh 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchcls   1/1     1            1           23m
+couchnode      1/2     2            1           11m
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  deploy -n ashutoshh 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchcls   1/1     1            1           23m
+couchnode      2/2     2            2           11m
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  po  -n ashutoshh 
+NAME                           READY   STATUS    RESTARTS   AGE
+ashucouchcls-c74bd9767-n5jx9   1/1     Running   0          23m
+couchnode-8bc7d847-fs5tq       1/1     Running   0          13s
+couchnode-8bc7d847-l7lpl       1/1     Running   0          11m
+
+```
