@@ -281,3 +281,13 @@ couchmain='192.168.30.80'
 couchbase-cli server-add -c $couchmain:8091  --username Administrator  --password redhat123 --server-add $IP:8091 --server-add-username Administrator --server-add-password couchdb 
 
 ```
+
+### kubectl command for couchbase 
+
+```
+  298  kubectl  cp  joinnode.sh   ashucouchjoinnode-597c9f4c48-z7lcl:/  
+  299  kubectl  cp  joinnode.sh   ashucouchjoinnode-597c9f4c48-z7lcl:/   -n ashutoshh 
+  300  kubectl  exec -it  ashucouchjoinnode-597c9f4c48-z7lcl  bash 
+  301  kubectl  exec -it  ashucouchjoinnode-597c9f4c48-z7lcl  bash  -n ashutoshh 
+
+```
