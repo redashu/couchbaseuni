@@ -70,3 +70,125 @@ status: {}
 [ec2-user@ip-172-31-73-6 couchbaseuni]$ kubectl  expose  pod  ashu-pod1  --type NodePort --port 1234 --target-port 8091 -n ashutoshh 
 service/ashu-pod1 exposed
 ```
+
+
+# Create personal namespace 
+
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  createa  namespace   ashutoshh 
+
+```
+
+# auto completion 
+```
+[ec2-user@ip-172-31-73-6 ~]$ vim    ~/.bashrc  
+[ec2-user@ip-172-31-73-6 ~]$ cat  ~/.bashrc 
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+source  <(kubectl  completion bash)
+[ec2-user@ip-172-31-73-6 ~]$ source  ~/.bashrc 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  
+alpha          attach         completion     create         edit           kustomize      plugin         run            uncordon
+annotate       auth           config         delete         exec           label          port-forward   scale          version
+api-resources  autoscale      convert        describe       explain        logs           proxy          set            wait
+api-versions   certificate    cordon         diff           expose         options        replace        taint          
+apply          cluster-info   cp             drain          get        
+
+```
+
+# Couchbase deployment using k8s deployment 
+
+```
+  249  kubectl  create  deployment  ashucouchdep1  --image=couchbase:community-6.5.1 --namespace ashutoshh --dry-run=client  -o yaml 
+  250  kubectl  create  deployment  ashucouchdep1  --image=couchbase:community-6.5.1 --namespace ashutoshh --dry-run=client  -o yaml      >ashucouchdep.yml
+  
+  ===
+  [ec2-user@ip-172-31-73-6 ~]$ cat  ashucouchdep.yml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:  #  labels of deploy 
+    app: ashucouchdep1
+  name: ashucouchdep1  # name of  deployment 
+  namespace: ashutoshh  #  name of namespace 
+spec:
+  replicas: 1  # it will create RS  and RS  will create one POd 
+  selector:
+    matchLabels:
+      app: ashucouchdep1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashucouchdep1   #  this will be label of POD 
+    spec:
+      containers:
+      - image: couchbase:community-6.5.1 # couchbase docker image  from Docker hub 
+        name: couchbase  #  name of container 
+        ports:
+        - containerPort: 8091  #  client to Node port for couchbase 
+        resources: {}
+status: {}
+
+=======
+
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  apply -f ashucouchdep.yml 
+deployment.apps/ashucouchdep1 created
+
+  ```
+  
+  ## check deployments 
+  
+  ```
+  
+  [ec2-user@ip-172-31-73-6 ~]$ kubectl  get  deployments -n ashutoshh 
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+ashucouchdep1   1/1     1            1           2m12s
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get  replicasets   -n  ashutoshh 
+NAME                       DESIRED   CURRENT   READY   AGE
+ashucouchdep1-6967888f67   1         1         1       2m24s
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get  rs   -n  ashutoshh 
+NAME                       DESIRED   CURRENT   READY   AGE
+ashucouchdep1-6967888f67   1         1         1       2m39s
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ 
+[ec2-user@ip-172-31-73-6 ~]$ kubectl   get  pods   -n  ashutoshh 
+NAME                             READY   STATUS    RESTARTS   AGE
+ashucouchdep1-6967888f67-7pc25   1/1     Running   0          2m47s
+
+```
+
+### checking worker node of pod
+```
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get  no 
+NAME                            STATUS   ROLES    AGE   VERSION
+ip-172-31-34-203.ec2.internal   Ready    master   27h   v1.18.8
+ip-172-31-53-123.ec2.internal   Ready    <none>   27h   v1.18.8
+ip-172-31-56-185.ec2.internal   Ready    <none>   27h   v1.18.8
+ip-172-31-59-10.ec2.internal    Ready    <none>   27h   v1.18.8
+ip-172-31-60-76.ec2.internal    Ready    <none>   27h   v1.18.8
+[ec2-user@ip-172-31-73-6 ~]$ kubectl  get  pods  -o wide  -n ashutoshh 
+NAME                             READY   STATUS    RESTARTS   AGE    IP              NODE                           NOMINATED NODE   READINESS GATES
+ashucouchdep1-6967888f67-7pc25   1/1     Running   0          4m5s   192.168.30.80   ip-172-31-59-10.ec2.internal   <none>           <none>
+[ec2-user@ip-172-31-73-6 ~]$ 
+
+```
+
+  
+  
