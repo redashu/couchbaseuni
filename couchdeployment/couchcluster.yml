@@ -46,3 +46,13 @@ spec:
   type: NodePort
 status:
   loadBalancer: {}
+
+---
+apiVersion: v1
+data:
+  clsip: ashucouchclssvc  #  clsip is a key and value must be same as service name 
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: ashucm1
+  namespace: ashutoshh

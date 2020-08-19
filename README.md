@@ -318,3 +318,68 @@ couchnode-8bc7d847-fs5tq       1/1     Running   0          13s
 couchnode-8bc7d847-l7lpl       1/1     Running   0          11m
 
 ```
+
+# implementing configMap for global variable
+```
+kubectl  create configmap   ashucm1  --from-literal  name=ashucouchclssvc --namespace  ashutoshh   --dry-run=client  -o yaml  >>couchcluster.yml
+
+
+```
+## deployment of first couchbase node
+
+```
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  apply -f  couchcluster.yml 
+deployment.apps/ashucouchcls created
+service/ashucouchclssvc created
+configmap/ashucm1 created
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  deploy,svc,cm  -n ashutoshh 
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ashucouchcls   1/1     1            1           23s
+
+NAME                      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/ashucouchclssvc   NodePort   10.101.214.47   <none>        8091:31778/TCP   23s
+
+NAME                DATA   AGE
+configmap/ashucm1   1      23s
+
+```
+## deployment of other node of couchbase using another deployment 
+
+```
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl apply -f  nodecouch.yml 
+deployment.apps/couchnode created
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl get  po -n ashutoshh 
+NAME                           READY   STATUS    RESTARTS   AGE
+ashucouchcls-c74bd9767-f6tpr   1/1     Running   0          33m
+couchnode-5d9f577564-5z78s     1/1     Running   0          10s
+[ec2-user@ip-172-31-73-6 couchdeployment]$ kubectl  get  all  -n ashutoshh 
+NAME                               READY   STATUS    RESTARTS   AGE
+pod/ashucouchcls-c74bd9767-f6tpr   1/1     Running   0          34m
+pod/couchnode-5d9f577564-5z78s     1/1     Running   0          79s
+
+NAME                      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                    AGE
+service/ashucouchclssvc   NodePort   10.103.191.85   <none>        8091:8091/TCP,8092:8092/TCP,8093:8093/TCP,11210:9145/TCP   34m
+
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ashucouchcls   1/1     1            1           34m
+deployment.apps/couchnode      1/1     1            1           79s
+
+NAME                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/ashucouchcls-c74bd9767   1         1         1       34m
+replicaset.apps/couchnode-5d9f577564     1         1         1       79s```
+
+```
+
+# change nodeport range of k8s on master node
+
+```
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+
+------ add 
+  - --service-cluster-ip-range=10.96.0.0/12 # already there
+    - --service-node-port-range=8000-13000 # added this 
+    
+### now reboot or- systemctl restart kubelet 
+
+```
+
