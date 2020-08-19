@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashucouchcls
+  name: ashucouchcls  # name of  deployment 
+  namespace: ashutoshh   #  namespace 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashucouchcls
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashucouchcls  #  label of pods 
+    spec:
+      nodeName: ip-172-31-56-185.ec2.internal
+      volumes:  #  to define and create kubernetes volumes
+      - name: ashucluster-vol # name of volume that will be create 
+        hostPath: #  this kind of volume will be taking store from k8s worker node 
+         path: /mnt/data/ec2-user/node1  # moupath from worker node 
+         type: Directory   # it will create above path if not present 
+      containers:
+      - image: dockerashu/couchbasecluster:community651v3
+        name: couchbase
+        ports:
+        - containerPort: 8091  # added this section 
+        volumeMounts:
+        - name: ashucluster-vol  # here in container we are mounting above created volume 
+          mountPath: /opt/couchbase/var/lib/couchbase/data  #  mountpath of couchbase image 
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashucouchclssvc
+  name: ashucouchclssvc   # name of service  we need to pass this value as  configMap value 
+  namespace: ashutoshh  # namespace 
+spec:
+  ports:
+  - name: webuiport
+    port: 8091
+    protocol: TCP
+    targetPort: 8091
+    nodePort: 8091  #  fix port as nodeport 
+
+  - name: secport
+    port: 8092
+    protocol: TCP
+    targetPort: 8092
+    nodePort: 8092
+
+  - name: thir
+    port: 8093
+    protocol: TCP
+    targetPort: 8093
+    nodePort: 8093
+
+  - name: thireee
+    port: 8094
+    protocol: TCP
+    targetPort: 8094
+    nodePort: 8094
+
+  - name: thireeekkk
+    port: 8095
+    protocol: TCP
+    targetPort: 8095
+    nodePort: 8095
+
+  - name: thirggeee
+    port: 8096
+    protocol: TCP
+    targetPort: 8096
+    nodePort: 8096
+
+  - name: port
+    port: 11210
+    protocol: TCP
+    targetPort: 11210
+    nodePort: 11210
+
+  - name: port12
+    port: 11211
+    protocol: TCP
+    targetPort: 11211
+    nodePort: 11211
+  selector:
+   app: ashucouchcls    #  this must match  to label of pods
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+data:
+  clsip: ashucouchclssvc  #  clsip is a key and value must be same as service name 
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: ashucm1
+  namespace: ashutoshh

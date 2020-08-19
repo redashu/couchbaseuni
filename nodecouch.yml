@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: couchnode
+  name: couchnode  # name of node deployment 
+  namespace: ashutoshh  # namespace info 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: couchnode
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: couchnode
+    spec:
+      volumes:
+      - name: ashuvolnode2
+        hostPath:
+         path: /mnt/data/ec2-user/node2 
+         type: DirectoryOrCreate
+      containers:
+      - image: dockerashu/couchbasenode:community651v3
+        name: couchbase
+        ports:
+        - containerPort: 8091  #  port of couchbase 
+        volumeMounts:
+        - name: ashuvolnode2
+          mountPath: /opt/couchbase/var/lib/couchbase/data  # data store mount path 
+        env:  #  introducing  some  environment variable 
+        - name: couchbase_cluster_ip   #  this variable is already define in docker image of node 
+          valueFrom:  #  taking  value ref from somewhere 
+           configMapKeyRef:  #  a keyword to use  configMap 
+            name: ashucm1  #  name of  configMap 
+            key: clsip  #  this key will be same as  key of configMap 
+        resources: {}
+status: {}
