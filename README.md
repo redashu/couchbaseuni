@@ -318,3 +318,10 @@ couchnode-8bc7d847-fs5tq       1/1     Running   0          13s
 couchnode-8bc7d847-l7lpl       1/1     Running   0          11m
 
 ```
+
+# implementing configMap for global variable
+```
+kubectl  create configmap   ashucm1  --from-literal  name=ashucouchclssvc --namespace  ashutoshh   --dry-run=client  -o yaml  >>couchcluster.yml
+
+
+```
