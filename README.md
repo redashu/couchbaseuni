@@ -369,3 +369,17 @@ replicaset.apps/ashucouchcls-c74bd9767   1         1         1       34m
 replicaset.apps/couchnode-5d9f577564     1         1         1       79s```
 
 ```
+
+# change nodeport range of k8s on master node
+
+```
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+
+------ add 
+  - --service-cluster-ip-range=10.96.0.0/12 # already there
+    - --service-node-port-range=8000-13000 # added this 
+    
+### now reboot or- systemctl restart kubelet 
+
+```
+
